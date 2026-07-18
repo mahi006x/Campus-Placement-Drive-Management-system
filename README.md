@@ -17,9 +17,9 @@ graph TD
     end
 
     subgraph Server [Express REST API - Port 5000]
-        AuthRoutes[/api/auth]
-        DriveRoutes[/api/drives]
-        RegRoutes[/api/registrations]
+        AuthRoutes["/api/auth"]
+        DriveRoutes["/api/drives"]
+        RegRoutes["/api/registrations"]
         AuthMW[Auth & RBAC Middleware]
         EligUtil[Eligibility Utility]
     end
