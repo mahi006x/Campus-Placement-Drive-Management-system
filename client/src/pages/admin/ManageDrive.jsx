@@ -359,7 +359,7 @@ const ManageDrive = () => {
                 {branchesList.map((branch) => {
                   const isChecked = formData.eligibleBranches.includes(branch);
                   return (
-                    <label
+                    <div
                       key={branch}
                       onClick={() => handleBranchChange(branch)}
                       className={`flex items-center space-x-2 border rounded-xl px-4 py-2 text-sm cursor-pointer select-none transition-all duration-300 ${
@@ -375,7 +375,7 @@ const ManageDrive = () => {
                         className="hidden"
                       />
                       <span>{branch}</span>
-                    </label>
+                    </div>
                   );
                 })}
               </div>
