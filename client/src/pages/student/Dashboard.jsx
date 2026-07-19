@@ -11,18 +11,26 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDrives = async () => {
+    const fetchDrives = async (showSpinner = true) => {
       try {
-        setLoading(true);
+        if (showSpinner) setLoading(true);
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/drives`);
         setDrives(response.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load placement drives');
       } finally {
-        setLoading(false);
+        if (showSpinner) setLoading(false);
       }
     };
-    fetchDrives();
+
+    fetchDrives(true);
+
+    // Dynamic background poll every 10 seconds for real-time data sync
+    const interval = setInterval(() => {
+      fetchDrives(false);
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   // Inlined client-side eligibility logic for immediate visual feedback

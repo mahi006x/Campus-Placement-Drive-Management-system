@@ -9,9 +9,9 @@ const AdminDashboard = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       setError('');
       
       const [statsRes, drivesRes] = await Promise.all([
@@ -24,12 +24,19 @@ const AdminDashboard = () => {
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to retrieve admin dashboard stats');
     } finally {
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchDashboardData(true);
+
+    // Dynamic background poll every 10 seconds for real-time data sync
+    const interval = setInterval(() => {
+      fetchDashboardData(false);
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleDeleteDrive = async (driveId, companyName) => {
