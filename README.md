@@ -1,132 +1,120 @@
-# Campus Placement Drive Registration System
+# Campus Coders - Campus Placement Drive Management System
 
-A full-stack, responsive web application for managing campus recruitment placement drives. It allows student registration, academic eligibility enforcement, seat tracking, and administrative controls for coordinate placement cell drives.
+Campus Coders is a full-stack, responsive web application for managing campus recruitment placement drives. It allows student registration, automates academic eligibility enforcement, tracks real-time seat counts, and provides administrative controls for placement coordinators.
 
 ---
 
-## Architecture Diagram
+## 🏗️ Folder Structure
 
-```mermaid
-graph TD
-    subgraph Client [React SPA Client - Port 5173]
-        Router[React Router]
-        AuthCtx[Auth Context / State]
-        AxiosInstance[Axios Interceptor]
-        StudentUI[Student Views]
-        AdminUI[Admin Views]
-    end
-
-    subgraph Server [Express REST API - Port 5000]
-        AuthRoutes["/api/auth"]
-        DriveRoutes["/api/drives"]
-        RegRoutes["/api/registrations"]
-        AuthMW[Auth & RBAC Middleware]
-        EligUtil[Eligibility Utility]
-    end
-
-    subgraph Database [MongoDB]
-        Users[(Users Collection)]
-        Drives[(Drives Collection)]
-        Registrations[(Registrations Collection)]
-    end
-
-    StudentUI --> Router
-    AdminUI --> Router
-    Router --> AuthCtx
-    AuthCtx --> AxiosInstance
-    AxiosInstance --> AuthMW
-    AuthMW --> AuthRoutes
-    AuthMW --> DriveRoutes
-    AuthMW --> RegRoutes
-    AuthRoutes --> Users
-    DriveRoutes --> Drives
-    RegRoutes --> Registrations
-    RegRoutes --> EligUtil
+```
+Campus-Placement-Drive-Management-system/
+├── client/                 # Frontend React SPA (Vite + Tailwind CSS)
+│   ├── public/             # Static public assets
+│   ├── src/                # React components, pages, and application logic
+│   ├── vercel.json         # Vercel deployment rewrite configurations
+│   ├── vite.config.js      # Vite build configuration
+│   └── package.json        # Frontend dependencies & scripts
+├── server/                 # Backend REST API (Node.js + Express)
+│   ├── config/             # Database connection setups
+│   ├── middleware/         # Custom authentication and access control rules
+│   ├── models/             # Mongoose database schemas
+│   ├── routes/             # Express API endpoints
+│   ├── scripts/            # Database seeding and mock generation utilities
+│   ├── index.js            # Main backend application entry point
+│   └── package.json        # Backend dependencies & scripts
+├── .gitignore              # Project-wide Git ignore rules
+└── README.md               # Project documentation
 ```
 
 ---
 
-## Tech Stack
-- **Frontend**: React (Vite), React Router, Tailwind CSS, Axios
-- **Backend**: Node.js + Express
-- **Database**: MongoDB + Mongoose
-- **Authentication**: JSON Web Token (JWT) stored in `localStorage`
+## 🎨 Tech Stack
+- **Frontend**: React (Vite), React Router DOM (v7), Tailwind CSS, Axios
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB + Mongoose ODM
+- **Authentication**: JWT (JSON Web Tokens) with client-side storage, password hashing using `bcryptjs`
 
 ---
 
-## Core Data Schema
-
-### 1. User
-- `name` (String, required)
-- `email` (String, required, unique)
-- `password` (String, required, hashed using bcrypt)
-- `role` (String, enum: `['student', 'admin']`, default: `'student'`)
-- `branch` (String, required for student)
-- `cgpa` (Number, min: `0`, max: `10`, required for student)
-- `backlogs` (Number, min: `0`, required for student)
-
-### 2. Drive
-- `companyName` (String, required)
-- `role` (String, required)
-- `packageLPA` (Number, required)
-- `eligibleBranches` (Array of Strings, required)
-- `minCGPA` (Number, required)
-- `maxBacklogs` (Number, required)
-- `driveDate` (Date, required)
-- `description` (String, required)
-- `seatsAvailable` (Number, default: `30`)
-- `createdBy` (ObjectId ref User, Admin only)
-
-### 3. Registration
-- `userId` (ObjectId ref User)
-- `driveId` (ObjectId ref Drive)
-- `status` (String, enum: `['Registered', 'Shortlisted', 'Rejected', 'Selected']`, default: `'Registered'`)
-- `registeredAt` (Date, default: `Date.now`)
-- *Composite unique index on (userId, driveId)*
+## 🚀 Features
+- **Student Dashboard**: Browse active recruitment drives, inspect package details (LPA), check academic qualifications, register, and monitor application status.
+- **Admin Control Panel**: Schedule new drives, customize requirements (min CGPA, max backlogs, eligible branches), manage available seats, track registered students, and update candidate statuses.
+- **Automated Eligibility Engine**: Validates eligibility constraints (CGPA, backlogs, branch checks) at the moment of registration.
+- **Seat Allocation Controller**: Automatically tracks and decrements available seats per drive, blocking further registrations once capacity is exhausted.
+- **Secure Role-Based Access (RBAC)**: REST API routes and React views secured by JSON Web Tokens.
 
 ---
 
-## Seeding & Test Credentials
-
-Running the seeding script clears existing data and loads:
-- **1 Admin Account**:
-  - Email: `admin@college.edu`
-  - Password: `admin123`
-- **4 Sample Student Accounts**:
-  - `aarav@college.edu` / `student123` (CSE, CGPA: 9.20, Backlogs: 0) — *Eligible for Google, Wipro, Capgemini, TCS*
-  - `ananya@college.edu` / `student123` (ECE, CGPA: 7.80, Backlogs: 1) — *Eligible for Wipro, Capgemini, TCS. Ineligible for Google (CGPA/Backlogs)*
-  - `rohan@college.edu` / `student123` (MECH, CGPA: 6.50, Backlogs: 0) — *Eligible for TCS Ninja only. Ineligible for others due to Branch*
-  - `kabir@college.edu` / `student123` (CIVIL, CGPA: 5.80, Backlogs: 3) — *Ineligible for all drives due to high backlogs or low CGPA*
-- **6 Sample Placement Drives**:
-  - **Google** (CSE/ECE, min CGPA: 8.5, max backlogs: 0, Package: 22.0 LPA, Seats: 5)
-  - **TCS Ninja** (All Branches, min CGPA: 6.0, max backlogs: 2, Package: 3.6 LPA, Seats: 50)
-  - **Infosys** (CSE/ECE/EEE, min CGPA: 7.5, max backlogs: 0, Package: 6.2 LPA, Seats: 15)
-  - **Wipro Turbo** (CSE/ECE, min CGPA: 7.0, max backlogs: 1, Package: 6.5 LPA, Seats: 20)
-  - **Capgemini** (CSE/ECE/EEE, min CGPA: 6.5, max backlogs: 1, Package: 4.0 LPA, Seats: 25)
-  - **Cognizant GenC Elevate** (CSE/ECE, min CGPA: 6.5, max backlogs: 0, Package: 4.5 LPA, Seats: 0) — *Used to verify seat-exhaustion blocking*
-
----
-
-## Local Setup & Installation
+## 🛠️ Installation & Local Setup
 
 ### Prerequisites
-- Node.js installed locally
-- MongoDB running locally (default: `mongodb://127.0.0.1:27017/campus_placement`)
+- Node.js (v16+) installed locally
+- MongoDB running locally or a MongoDB Atlas Cloud URI
 
 ### 1. Backend Server Setup
 ```bash
 cd server
 npm install
-# Create .env file matching .env.example
-npm run seed
-npm start
+# Create a .env file (see Environment Variables section below)
+npm run seed     # Clear DB and seed mock data
+npm run dev      # Run in development mode with nodemon
 ```
 
 ### 2. Frontend Client Setup
 ```bash
-cd client
+cd ../client
 npm install
-# Create .env file matching .env.example
-npm run dev
+# Create a .env file (see Environment Variables section below)
+npm run dev      # Launch local development server
 ```
-The client application will run at [http://localhost:5173](http://localhost:5173).
+
+The application will run locally at [http://localhost:5173](http://localhost:5173), forwarding API requests to [http://localhost:5000](http://localhost:5000).
+
+---
+
+## 🔑 Environment Variables
+
+### Backend Server (`server/.env`)
+Create a `.env` file in the `server` directory:
+```env
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/campus_placement
+JWT_SECRET=your_jwt_secret_here
+FRONTEND_URL=http://localhost:5173
+```
+*Note: In production, `MONGODB_URI` must point to your MongoDB Atlas cluster, and `FRONTEND_URL` must point to your deployed Vercel domain.*
+
+### Frontend Client (`client/.env`)
+Create a `.env` file in the `client` directory:
+```env
+VITE_API_URL=http://127.0.0.1:5000/api
+```
+*Note: In production, `VITE_API_URL` must point to your deployed Render URL (e.g., `https://campus-coders-api.onrender.com/api`).*
+
+---
+
+## 🌐 Production Deployment
+
+### 1. Backend Deployment on Render
+- **Type**: Web Service
+- **Root Directory**: `server`
+- **Build Command**: `npm install`
+- **Start Command**: `npm start`
+- **Environment Variables**: Define `PORT`, `MONGODB_URI`, `JWT_SECRET`, and `FRONTEND_URL` (Vercel URL).
+
+### 2. Frontend Deployment on Vercel
+- **Framework Preset**: `Vite`
+- **Root Directory**: `client`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variables**: Define `VITE_API_URL` (Render API URL).
+
+---
+
+## 🧪 Seeding & Test Accounts
+Running `npm run seed` in the `server` folder creates:
+- **Admin**: `admin@college.edu` / `admin123`
+- **CSE Student (Eligible)**: `aarav@college.edu` / `student123`
+- **ECE Student (Backlog Check)**: `ananya@college.edu` / `student123`
+- **Mech Student (Branch Check)**: `rohan@college.edu` / `student123`
+- **Civil Student (High Backlogs/Disqualified)**: `kabir@college.edu` / `student123`

@@ -12,7 +12,24 @@ connectDB();
 const app = express();
 
 // Middlewares
-app.use(cors({ origin: '*' })); // Enable all CORS for simple client-server cross communication
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow server-to-server or local REST client requests with no origin
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*') || allowedOrigins.length === 0) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS policy.'));
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Main Router Declarations
