@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
@@ -18,29 +19,6 @@ import AdminDashboard from './pages/admin/Dashboard';
 import AdminManageDrive from './pages/admin/ManageDrive';
 import AdminDriveRegistrations from './pages/admin/DriveRegistrations';
 
-// Helper component to redirect root request to appropriate dashboard
-const RootRedirect = () => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-950">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return user.role === 'admin' ? (
-    <Navigate to="/admin" replace />
-  ) : (
-    <Navigate to="/dashboard" replace />
-  );
-};
-
 const AppContent = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col">
@@ -48,11 +26,9 @@ const AppContent = () => {
       <main className="flex-1 w-full">
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-
-          {/* Root Selector */}
-          <Route path="/" element={<RootRedirect />} />
 
           {/* Student Role Routes */}
           <Route element={<ProtectedRoute allowedRoles={['student']} />}>
