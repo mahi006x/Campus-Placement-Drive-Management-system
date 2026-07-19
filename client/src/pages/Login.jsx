@@ -60,7 +60,7 @@ const Login = () => {
             CP
           </div>
           <h2 className="text-2xl font-extrabold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-            Campus Coders Portal
+            Placement Drive Portal
           </h2>
           <p className="text-sm text-slate-500 mt-2 font-medium">Placement Drive Registration Platform</p>
         </div>

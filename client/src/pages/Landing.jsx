@@ -28,9 +28,9 @@ const Landing = () => {
         </div>
 
         <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900 leading-tight">
-          Streamlining Campus Placements with <br />
+          College Placement Drive <br />
           <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 bg-clip-text text-transparent">
-            Campus Coders
+            Management System
           </span>
         </h1>
 

@@ -1,6 +1,6 @@
-# Campus Coders - Campus Placement Drive Management System
+# Campus Placement Drive Management System
 
-Campus Coders is a full-stack, responsive web application for managing campus recruitment placement drives. It allows student registration, automates academic eligibility enforcement, tracks real-time seat counts, and provides administrative controls for placement coordinators.
+This is a full-stack, responsive web application for managing campus recruitment placement drives. It allows student registration, automates academic eligibility enforcement, tracks real-time seat counts, and provides administrative controls for placement coordinators.
 
 ---
 
@@ -89,7 +89,7 @@ Create a `.env` file in the `client` directory:
 ```env
 VITE_API_URL=http://127.0.0.1:5000/api
 ```
-*Note: In production, `VITE_API_URL` must point to your deployed Render URL (e.g., `https://campus-coders-api.onrender.com/api`).*
+*Note: In production, `VITE_API_URL` must point to your deployed Render URL (e.g., `https://campus-placement-api.onrender.com/api`).*
 
 ---
 
