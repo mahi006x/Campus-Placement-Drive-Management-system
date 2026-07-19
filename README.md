@@ -1,6 +1,8 @@
 # Campus Placement Drive Management System
 
-This is a full-stack, responsive web application for managing campus recruitment placement drives. It allows student registration, automates academic eligibility enforcement, tracks real-time seat counts, and provides administrative controls for placement coordinators.
+A full-stack, responsive web application designed to coordinate university campus recruitment placement drives. It manages student profiles, automates academic eligibility enforcement, supports real-time seat tracking, and provides administrative dashboards for placement coordinators.
+
+**Live Deployment URL**: [https://campus-placement-drive-management-s.vercel.app](https://campus-placement-drive-management-s.vercel.app)
 
 ---
 
@@ -36,12 +38,14 @@ Campus-Placement-Drive-Management-system/
 
 ---
 
-## 🚀 Features
-- **Student Dashboard**: Browse active recruitment drives, inspect package details (LPA), check academic qualifications, register, and monitor application status.
-- **Admin Control Panel**: Schedule new drives, customize requirements (min CGPA, max backlogs, eligible branches), manage available seats, track registered students, and update candidate statuses.
-- **Automated Eligibility Engine**: Validates eligibility constraints (CGPA, backlogs, branch checks) at the moment of registration.
-- **Seat Allocation Controller**: Automatically tracks and decrements available seats per drive, blocking further registrations once capacity is exhausted.
-- **Secure Role-Based Access (RBAC)**: REST API routes and React views secured by JSON Web Tokens.
+## 🚀 Key Features
+
+- **Product Landing Page**: A landing page (`/`) introducing the platform and providing direct paths to sign in or create accounts.
+- **Tabbed Login Portal (Industry Standard)**: A unified sign-in component with tabs for **Student Login** and **Admin Login**. Validates student/admin roles against credentials in the database to prevent cross-login security breaches.
+- **Real-Time Data Syncing**: Automatic background polling fetches placement drives and coordinate statistics every **10 seconds** without page refreshes or blocking loaders.
+- **Automated Eligibility Engine**: Validates candidate parameters (branch, CGPA, and backlogs) at the moment of registration.
+- **Seat Allocation Controller**: Tracks company drive capacity in real time, decrementing seats automatically on application and blocking registration when seats are exhausted.
+- **Admin Command Center**: Interfaces to schedule, edit, or delete drives, manage applicant lists, filter registered candidates by qualifications, and update hiring statuses.
 
 ---
 
@@ -56,8 +60,8 @@ Campus-Placement-Drive-Management-system/
 cd server
 npm install
 # Create a .env file (see Environment Variables section below)
-npm run seed     # Clear DB and seed mock data
-npm run dev      # Run in development mode with nodemon
+npm run seed     # Clear database and seed mock data
+npm run dev      # Run server in development mode with nodemon
 ```
 
 ### 2. Frontend Client Setup
@@ -93,28 +97,29 @@ VITE_API_URL=http://127.0.0.1:5000/api
 
 ---
 
-## 🌐 Production Deployment
+## 🌐 Production Deployment Guide
 
-### 1. Backend Deployment on Render
-- **Type**: Web Service
+### 1. Backend Deployment (Render)
+- **Service Type**: Web Service
 - **Root Directory**: `server`
 - **Build Command**: `npm install`
 - **Start Command**: `npm start`
-- **Environment Variables**: Define `PORT`, `MONGODB_URI`, `JWT_SECRET`, and `FRONTEND_URL` (Vercel URL).
+- **Environment Variables**: Define `PORT`, `MONGODB_URI` (Atlas connection string), `JWT_SECRET`, and `FRONTEND_URL` (your Vercel URL).
+- **MongoDB Atlas Setup**: Ensure Atlas **Network Access** includes `0.0.0.0/0` (Allow access from anywhere) since Render instances operate on dynamic IP addresses.
 
-### 2. Frontend Deployment on Vercel
+### 2. Frontend Deployment (Vercel)
 - **Framework Preset**: `Vite`
 - **Root Directory**: `client`
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
-- **Environment Variables**: Define `VITE_API_URL` (Render API URL).
+- **Environment Variables**: Define `VITE_API_URL` pointing to your deployed Render service endpoint (e.g. `https://xxx.onrender.com/api`).
 
 ---
 
 ## 🧪 Seeding & Test Accounts
 Running `npm run seed` in the `server` folder creates:
-- **Admin**: `admin@college.edu` / `admin123`
-- **CSE Student (Eligible)**: `aarav@college.edu` / `student123`
-- **ECE Student (Backlog Check)**: `ananya@college.edu` / `student123`
-- **Mech Student (Branch Check)**: `rohan@college.edu` / `student123`
-- **Civil Student (High Backlogs/Disqualified)**: `kabir@college.edu` / `student123`
+- **Admin Account**: `admin@college.edu` / `admin123`
+- **CSE Student (Eligible for Google)**: `aarav@college.edu` / `student123` (CGPA: 9.20, Backlogs: 0)
+- **ECE Student (Backlog Check)**: `ananya@college.edu` / `student123` (CGPA: 7.80, Backlogs: 1)
+- **Mech Student (Branch Check)**: `rohan@college.edu` / `student123` (CGPA: 6.50, Backlogs: 0)
+- **Civil Student (Disqualified by Backlogs)**: `kabir@college.edu` / `student123` (CGPA: 5.80, Backlogs: 3)
